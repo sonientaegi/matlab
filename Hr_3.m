@@ -3,7 +3,7 @@ function [ Hr, w, c, L ] = Hr_3( h )
 %  w = 0 ~ pi, 500 samples
 %  c = LPF coefficients
 %  L = Order of Hr
-%  h = Impluse response
+%  h = Impluse response 
 
 M   = length(h); L = (M-1)/2;
 c   = 2*h(L+1:-1:1);
