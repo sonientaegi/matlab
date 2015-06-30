@@ -3,17 +3,12 @@ function [ T ] = period( src, Fs )
 MAX_TEMPO = 300;
 Tmin = 60 / MAX_TEMPO * Fs;
 
-% LPF 통과 : 100hz 
-wc = 2*pi/Fs * 100;
-M = 51;
-w = ideal_lp(wc, M);
-h = hamming(M)';
-lpf = w .* h;
-y = conv(src, lpf);
-
 % Auto correlation 수행
-y = abs(xcorr(y, fliplr(y)));
-plot(1:length(y), y);
+y = xcorr(src, fliplr(src));
+y = abs(y);
+n = ([1:length(y)] - length(y)/2)/Fs;
+
+plot(n, y);
 
 % 최대 Peak 검출
 [value, index] = max(y);   % Value, Index
@@ -27,5 +22,6 @@ for i = [peakMax(2) + Tmin : length(y)]
 end
     
 T = peakNext(2) - peakMax(2);
+T = T / Fs;
 end
 

@@ -1,9 +1,6 @@
 function [ y ] = hpf( src, Fc, Fs, M )
-wc = 2*pi / Fs * Fc;
-h = ideal_lp(wc, M);
-H = dft(h);
-h = idft(1-H);
-stem(1:M, abs(H));
+wc = pi*2*Fc/Fs;
+h = ideal_lp(pi, M) - ideal_lp(wc, M);
 w = hamming(M)';
 hpf = w .* h;
 
