@@ -1,27 +1,22 @@
 function [ T ] = period( src, Fs )
 % 일반적으로 가장 빠른 음악의 템포를 미리 지정 
 MAX_TEMPO = 300;
-Tmin = 60 / MAX_TEMPO * Fs;
+Tmin = 60 / MAX_TEMPO * Fs * 2;
 
 % Auto correlation 수행
-y = xcorr(src, fliplr(src));
-y = abs(y);
-n = ([1:length(y)] - length(y)/2)/Fs;
+y = xcorr(src); %conv(src, fliplr(src));
+nCenter = length(src);
+plot([-nCenter+1:nCenter-1]/Fs, y);
 
-plot(n, y);
-
-% 최대 Peak 검출
-[value, index] = max(y);   % Value, Index
-peakMax  = [value, index];
-peakNext = [y(length(y)), length(y)];
-
-for i = [peakMax(2) + Tmin : length(y)] 
-    if peakNext(1) < y(i)
-        peakNext = [y(i), i];
+% 2nd Peak 검출
+peakNext = [length(y), y(length(y))];
+% valleyNext = [nCenter, 
+for i = nCenter+Tmin:length(y)
+    if y(i) > peakNext(2)
+        peakNext = [i, y(i)];
     end
 end
-    
-T = peakNext(2) - peakMax(2);
+T = peakNext(1) - nCenter;
 T = T / Fs;
 end
 
