@@ -1,4 +1,4 @@
-[src, Fs] = audioread('music/catandi.mp3');
+[src, Fs] = audioread('music/destiny.mp3');
 
 nSamples = length(src);
 nBlock = 20*Fs;
@@ -15,4 +15,5 @@ end
 src10Sec = src(index:length(src));
 srcBase = bpf(src10Sec, 32, 192, Fs, 1001);
 T(k+1) = period(srcBase);
+T'
     
