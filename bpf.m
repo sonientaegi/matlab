@@ -6,7 +6,7 @@ end
 hh = ideal_lp(pi*2*FcHigh/Fs, M);
 hl = ideal_lp(pi*2*FcLow/Fs, M);
 h = hh - hl;
-w = hamming(M)';
+w = blackman(M)';
 bpf = h.*w;
 y = conv(src, bpf);
 end

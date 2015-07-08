@@ -1,48 +1,40 @@
-[src, Fs] = audioreadcut('music/cat.mp3', 0, -1);
+Tstart = 0;         % 시작 시각
+Tstop =  -1;         % 종료 시각
+Tperiod = 8;        % 주기 산출 구간 길이
+Ht = 0.05;           % Power Hold 시간
+Mw = 101;            % TD Conv Window 크기
+Mfilter = 100;         % LPF 크기
+clf;
+
+
+[src, Fs] = audioreadcut('music/nadia.flac', Tstart, Tstop);
 src = src(1, :);
-src = lpf(src, 256, Fs, 1001);
-Ts = 5;
-Tperiod = zeros(2, ceil(length(src)/Fs/Ts));
+src = lpf(src, 128, Fs, Mfilter) + hpf(src, 10000, Fs, Mfilter);
+sound(src, Fs);
 
-% Signal 로 주기 분석
-index = 1;
-for i = 1:Fs*Ts:length(src)-Fs*Ts
-    Tperiod(1, index) = period(src(i:i+Fs*Ts-1), Fs);
-    index = index + 1;
-end
-
-% Power 로 주기 분석
+Hs = Ht * Fs;
 pow = src .* src;
 
-Tps = 0.1;
-Fps = 1/Tps;
-powSample = zeros(1, ceil(length(src) / (Fs*Tps)));
-index = 1;
-for i = 1:Fs*Tps:length(src)-Fs*Tps
-    powSample(index) = sum(pow(i:i+Fs*Tps-1));
-    index = index+1;
+% Time domain window convolution
+w = blackman(Mw)';
+fil = conv(pow, w);
+fil = fil(Mw/2+1:Mw/2+length(pow));
+
+% energy 추출
+energy = zeros(1, length(pow));
+for i = 1:Hs:length(src)-Hs
+    sop = sum(pow(i:i+Hs-1)) / Hs;
+    energy(i:i+Hs-1) = sop;
 end
 
-index = 1;
-for i = 1:Fps*Ts:length(powSample)-Fps*Ts
-    Tperiod(2, index) = period(powSample(i:i+Fps*Ts-1), Fps);
-    index = index + 1;
-end
+T(1, :) = periods(src, Fs, Tperiod);
+T(2, :) = periods(pow, Fs, Tperiod);
+T(3, :) = periods(energy, Fs, Tperiod);
+T(4, :) = periods(fil, Fs, Tperiod);
 
-
-% pow = src .* src;
-% 
-% sample = zeros(1, ceil(length(src) / Ts));
-% index = 1;
-% for i = 1:Ts:length(src)-Ts
-%     sample(index) = sum(pow(i:i+Ts-1));
-%     index = index+1;
-% end
-% 
-% Tps = 5;
-% Tperiod = zeros(1, ceil(length(sample) / 500));
-% index = 1;
-% for i = 1:500:length(sample)-500
-%     Tperiod(index) = period(sample(i:i+499), Ts/4)
-%     index = index + 1;
-% end
+t = [1:length(src)] / Fs + Tstart;
+subplot(5,1,1); plot(t, src);
+subplot(5,1,2); plot(t, pow);
+subplot(5,1,3); plot(t, energy);
+subplot(5,1,4); plot(t, fil);
+subplot(5,1,5); plot((0:length(T(1, :))-1) * Tperiod, T);
