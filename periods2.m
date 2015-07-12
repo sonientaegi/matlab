@@ -1,7 +1,7 @@
 function [ T ] = periods2( data, Fs, Tmax )
 Fc_low  = 128;
 Fc_high = 10000;
-Mfilter = 1001;
+Mfilter = 501;
 
 % 1. data 를 Fc_low - Fc_hi BandStop 필터를 통과시켜 베이스드럼과 스네어드럼을 추출한다.
 wc_low  = 2*pi/Fs*Fc_low;
@@ -15,8 +15,8 @@ lpf     = w .* h_lp;
 bsf     = w .* h_bs;
 
 % src     = conv(data, hpf);
-src     = conv(data, bsf);
-% src     = conv(data, lpf);
+% src     = conv(data, bsf);
+src     = conv(data, lpf);
 src     = src((Mfilter+1)/2:(Mfilter-1)/2+length(data));
 
 % 2. power 를 구한다.
