@@ -17,7 +17,7 @@ bsf     = w .* h_bs;
 % src     = conv(data, hpf);
 % src     = conv(data, bsf);
 src     = conv(data, lpf);
-src     = src((Mfilter+1)/2:(Mfilter-1)/2+length(data));
+src     = src(1:length(data));
 
 % 2. power 를 구한다.
 src     = src .* src;
