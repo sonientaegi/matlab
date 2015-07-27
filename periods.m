@@ -17,7 +17,7 @@ bpf     = w .* hbp;
 % src   = conv(data, hpf);
 % src     = conv(data, bpf);
 src     = conv(data, lpf);
-src     = src((Mfilter+1)/2:(Mfilter-1)/2+length(data));
+src     = src(Mfilter:length(data));
 
 % 2. power 를 구한다.
 pow     = src .* src;

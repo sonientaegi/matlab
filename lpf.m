@@ -4,6 +4,6 @@ h = ideal_lp(wc, M);
 w = blackman(M)';
 lpf = w .* h;
 
-y = conv(src, lpf);
+y = conv(lpf, src);
 end
 
