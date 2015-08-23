@@ -1,0 +1,13 @@
+clear;
+Fc = 128;
+START = 42; 
+STOP = 46;
+[source, Fs] = audioreadcut('breathe.mp3', START, STOP);
+wc = 2*pi*Fc/Fs;
+sourceAbs = abs(source);
+signal = lpf_iir(sourceAbs .^ 2, wc); 
+power = signal .^2;
+T = [START:1/Fs:STOP-1/Fs];
+Freq = [0:Fs/length(source):Fs/2-(Fs/length(source))];
+spectrum = fft(source);
+spectrumNormal = spectrum(1:length(spectrum)/2);
