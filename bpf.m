@@ -9,6 +9,6 @@ h = hh - hl;
 w = blackman(M)';
 bpf = h.*w;
 y = conv(src, bpf);
-y = y(M+1:length(src));
+y = y(M/2+1:length(src)-M/2);
 end
 
